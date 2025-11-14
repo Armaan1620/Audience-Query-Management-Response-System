@@ -1,7 +1,7 @@
-import express from 'express';
-import cors from 'cors';
-import swaggerUi from 'swagger-ui-express';
-import swaggerJsDoc from 'swagger-jsdoc';
+import express = require('express');
+import cors = require('cors');
+import swaggerUi = require('swagger-ui-express');
+import swaggerJsDoc = require('swagger-jsdoc');
 import routes from './routes';
 import { env } from './config/environment';
 import { errorHandler } from './middlewares/errorHandler';

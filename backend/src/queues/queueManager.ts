@@ -5,7 +5,9 @@ import { logger } from '../utils/logger';
 import { aiService } from '../services/aiService';
 import { queryRepository } from '../repositories/queryRepository';
 
-const connection = new IORedis(env.redisUrl);
+const connection = new IORedis(env.redisUrl, {
+  maxRetriesPerRequest: null,
+});
 
 export const classificationQueue = new Queue('classification', { connection });
 export const priorityQueue = new Queue('priority-scoring', { connection });
@@ -15,9 +17,21 @@ new Worker(
   'classification',
   async (job) => {
     const { queryId, message } = job.data as { queryId: string; message: string };
+
     const insights = await aiService.classifyQuery(message);
-    await queryRepository.updateAIInsights(queryId, insights);
-    logger.info({ queryId }, 'Classification complete');
+
+    // Derive tags from AI insights (auto-tagging)
+    const tags = [
+      { name: insights.category, confidence: insights.confidence },
+      { name: `sentiment:${insights.sentiment}`, confidence: insights.confidence },
+      { name: `urgency:${insights.urgency}`, confidence: insights.confidence },
+    ];
+
+    // Persist structured JSON for insights and tags
+    await queryRepository.updateAIInsights(queryId, insights as any);
+    await queryRepository.updateTags(queryId, tags as any);
+
+    logger.info({ queryId }, 'Classification and tagging complete');
   },
   { connection }
 );
@@ -26,11 +40,23 @@ new Worker(
   'priority-scoring',
   async (job) => {
     const { queryId, message } = job.data as { queryId: string; message: string };
-    const urgency = message.toLowerCase().includes('urgent') ? 'urgent' : 'medium';
+
+    // Use simple heuristics based on message content for now
+    const lower = message.toLowerCase();
+    let urgency: string = 'medium';
+
+    if (lower.includes('immediately') || lower.includes('asap') || lower.includes('critical')) {
+      urgency = 'critical';
+    } else if (lower.includes('urgent') || lower.includes('as soon as possible')) {
+      urgency = 'high';
+    }
+
     await queryRepository.updatePriority(queryId, urgency);
-    if (urgency === 'urgent') {
+
+    if (urgency === 'high' || urgency === 'critical') {
       await queryRepository.updateStatus(queryId, 'escalated');
     }
+
     logger.info({ queryId, urgency }, 'Priority scored');
   },
   { connection }

@@ -6,18 +6,29 @@ const client = env.openAIApiKey
   ? new OpenAI({ apiKey: env.openAIApiKey })
   : null;
 
-const categories = ['question', 'request', 'complaint', 'feedback'];
-const sentiments = ['positive', 'neutral', 'negative'];
-const urgencies = ['low', 'medium', 'high', 'critical'];
+const categories = ['question', 'request', 'complaint', 'feedback'] as const;
+const sentiments = ['positive', 'neutral', 'negative'] as const;
+const urgencies = ['low', 'medium', 'high', 'critical'] as const;
+
+export interface AIClassificationResult {
+  category: string;
+  sentiment: string;
+  urgency: string;
+  confidence: number;
+}
 
 export const aiService = {
-  async classifyQuery(message: string) {
+  async classifyQuery(message: string): Promise<AIClassificationResult> {
     if (!client) {
       // Mock implementation
-      const mock = {
-        category: categories[Math.floor(Math.random() * categories.length)],
-        sentiment: sentiments[Math.floor(Math.random() * sentiments.length)],
-        urgency: urgencies[Math.floor(Math.random() * urgencies.length)],
+      const category = categories[Math.floor(Math.random() * categories.length)] ?? 'question';
+      const sentiment = sentiments[Math.floor(Math.random() * sentiments.length)] ?? 'neutral';
+      const urgency = urgencies[Math.floor(Math.random() * urgencies.length)] ?? 'medium';
+
+      const mock: AIClassificationResult = {
+        category,
+        sentiment,
+        urgency,
         confidence: Number((Math.random() * 0.5 + 0.5).toFixed(2)),
       };
       logger.debug({ mock }, 'Using mock AI classification');
@@ -36,7 +47,7 @@ export const aiService = {
       throw new Error('No response from OpenAI');
     }
 
-    const parsed = JSON.parse(content);
+    const parsed = JSON.parse(content) as AIClassificationResult;
     return parsed;
   },
 };

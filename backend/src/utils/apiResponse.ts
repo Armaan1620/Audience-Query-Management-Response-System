@@ -10,14 +10,28 @@ export interface ApiError {
   details?: unknown;
 }
 
-export const success = <T>(data: T, message?: string): ApiSuccess<T> => ({
-  success: true,
-  data,
-  message,
-});
+export const success = <T>(data: T, message?: string): ApiSuccess<T> => {
+  const response: ApiSuccess<T> = {
+    success: true,
+    data,
+  };
 
-export const failure = (message: string, details?: unknown): ApiError => ({
-  success: false,
-  message,
-  details,
-});
+  if (message !== undefined) {
+    response.message = message;
+  }
+
+  return response;
+};
+
+export const failure = (message: string, details?: unknown): ApiError => {
+  const error: ApiError = {
+    success: false,
+    message,
+  };
+
+  if (details !== undefined) {
+    error.details = details;
+  }
+
+  return error;
+};
