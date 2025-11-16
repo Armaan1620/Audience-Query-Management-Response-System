@@ -1,0 +1,25 @@
+{
+  "name": "query-simulator",
+  "version": "1.0.0",
+  "description": "Simulator for generating test queries across multiple channels",
+  "type": "module",
+  "main": "bulk/bulkGenerator.js",
+  "scripts": {
+    "email": "node email/index.js",
+    "social": "node social/index.js",
+    "chat": "node chat/index.js",
+    "community": "node community/index.js",
+    "bulk": "node bulk/index.js",
+    "bulk:100": "node -e \"import('./bulk/bulkGenerator.js').then(m => m.default({ count: 100 }))\"",
+    "bulk:500": "node -e \"import('./bulk/bulkGenerator.js').then(m => m.default({ count: 500 }))\""
+  },
+  "keywords": ["simulator", "testing", "queries"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.13.2",
+    "dotenv": "^17.2.3",
+    "nodemailer": "^6.9.16"
+  }
+}
+

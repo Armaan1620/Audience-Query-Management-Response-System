@@ -1,5 +1,5 @@
 export type QueryStatus = 'new' | 'in_progress' | 'escalated' | 'resolved' | 'closed';
-export type QueryChannel = 'email' | 'social' | 'chat';
+export type QueryChannel = 'email' | 'social' | 'chat' | 'community';
 
 export interface QueryTag {
   name: string;

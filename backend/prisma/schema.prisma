@@ -67,3 +67,12 @@ model QueryActivity {
   metadata  Json?
   createdAt DateTime @default(now())
 }
+
+model Settings {
+  id        String   @id @default(uuid())
+  category  String   @unique
+  data      Json
+  updatedBy String?
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}

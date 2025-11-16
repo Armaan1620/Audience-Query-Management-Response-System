@@ -64,3 +64,4 @@ Axios client configured in `src/services/api.ts`. API responses follow the forma
 - Preview: `npm run preview`
 - Lint: `npm run lint`
 
+

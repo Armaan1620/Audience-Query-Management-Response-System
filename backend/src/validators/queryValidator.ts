@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const createQuerySchema = z.object({
-  channel: z.enum(['email', 'social', 'chat']),
+  channel: z.enum(['email', 'social', 'chat', 'community']),
   subject: z.string().min(1),
   message: z.string().min(1),
   customerName: z.string().optional(),

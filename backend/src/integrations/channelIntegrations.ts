@@ -4,7 +4,7 @@ export type ChannelPayload = {
   subject: string;
   message: string;
   from: string;
-  channel: 'email' | 'social' | 'chat';
+  channel: 'email' | 'social' | 'chat' | 'community';
 };
 
 export const channelIntegrations = {

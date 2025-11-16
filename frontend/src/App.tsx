@@ -5,6 +5,7 @@ import { LoginPage } from './pages/Login';
 import { InboxPage } from './pages/Inbox';
 import { QueryDetailsPage } from './pages/QueryDetails';
 import { AnalyticsPage } from './pages/Analytics';
+import { TeamsPage } from './pages/Teams';
 import { SettingsPage } from './pages/Settings';
 import { Loader } from './components/Loader';
 
@@ -24,6 +25,14 @@ const App = () => {
         />
         <Route path="/queries/:id" element={<QueryDetailsPage />} />
         <Route path="/analytics" element={<AnalyticsPage />} />
+        <Route
+          path="/teams"
+          element={
+            <Suspense fallback={<Loader />}>
+              <TeamsPage />
+            </Suspense>
+          }
+        />
         <Route path="/settings" element={<SettingsPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/login" replace />} />

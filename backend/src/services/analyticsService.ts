@@ -4,6 +4,8 @@ export interface AnalyticsSummary {
   totalQueries: number;
   byStatus: Record<string, number>;
   byPriority: Record<string, number>;
+  byChannel: Record<string, number>;
+  byTeam: Record<string, number>;
   last30DaysCount: number;
   averageResolutionHours: number;
 }
@@ -13,6 +15,8 @@ export const analyticsService = {
     const queries = await queryRepository.list();
     const byStatus: Record<string, number> = {};
     const byPriority: Record<string, number> = {};
+    const byChannel: Record<string, number> = {};
+    const byTeam: Record<string, number> = {};
 
     const now = new Date();
     const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
@@ -26,6 +30,13 @@ export const analyticsService = {
 
       const priority = q.priority ?? 'unknown';
       byPriority[priority] = (byPriority[priority] ?? 0) + 1;
+
+      const channel = q.channel ?? 'unknown';
+      byChannel[channel] = (byChannel[channel] ?? 0) + 1;
+
+      // Count by team
+      const teamName = q.team?.name ?? 'Unassigned';
+      byTeam[teamName] = (byTeam[teamName] ?? 0) + 1;
 
       const createdAt = new Date(q.createdAt);
       const updatedAt = new Date(q.updatedAt ?? q.createdAt);
@@ -51,6 +62,8 @@ export const analyticsService = {
       totalQueries: queries.length,
       byStatus,
       byPriority,
+      byChannel,
+      byTeam,
       last30DaysCount,
       averageResolutionHours,
     };
