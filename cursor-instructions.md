@@ -1,2 +1,0 @@
-- the code should be modular , easily readable and should be divided into components and quality of the code should be good.
--Always make sure you use the besst of your abilities to build this project.
